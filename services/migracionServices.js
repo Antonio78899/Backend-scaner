@@ -1,8 +1,11 @@
 const mysql = require('mysql2/promise');
 const { Client } = require('pg');
+const dayjs = require('dayjs');
 require('dotenv').config({ path: '.env.local' });
 
 async function obtenerDatosDesdeMySQL() {
+  const fechaInicio = dayjs().subtract(1, 'month').format('YYYY-MM-DD');
+
   const connection = await mysql.createConnection({
     host: process.env.MYSQL_HOST,
     user: process.env.MYSQL_USER,
@@ -13,14 +16,15 @@ async function obtenerDatosDesdeMySQL() {
 
   const [rows] = await connection.execute(`
     SELECT fecha, warehouse, canaln, guia FROM mst_warehouse_c
-    WHERE canaln = 'R' AND fecha >= '2025-07-01'
+    WHERE canaln = 'R' AND fecha >= ?
     UNION ALL
     SELECT fecha, warehouse, canaln, guia FROM mst_warehousext_c
-    WHERE canaln = 'R' AND fecha >= '2025-07-01'
+    WHERE canaln = 'R' AND fecha >= ?
     UNION ALL
     SELECT fecha, warehouse, canaln, guia FROM mst_warehousext_s
-    WHERE canaln = 'R' AND fecha >= '2025-07-01'
-  `);
+    WHERE canaln = 'R' AND fecha >= ?
+  `, [fechaInicio, fechaInicio, fechaInicio]);
+
 
   await connection.end();
   return rows;
@@ -37,6 +41,12 @@ async function insertarDatosEnPostgres(rows) {
   try {
     await pgClient.connect();
 
+    const fechaInicio = dayjs().subtract(1, 'month').format('YYYY-MM-DD');
+
+    // 🗑️ Eliminar registros anteriores a fechaInicio
+    await pgClient.query('DELETE FROM codigos_rojos WHERE fecha < $1', [fechaInicio]);
+    console.log(`🗑️ Registros anteriores a ${fechaInicio} eliminados de codigos_rojos`);
+
     let insertados = 0;
     for (const row of rows) {
       try {
@@ -44,7 +54,10 @@ async function insertarDatosEnPostgres(rows) {
           `INSERT INTO codigos_rojos (fecha, warehouse, guia, canaln)
         VALUES ($1, $2, $3, $4)
         ON CONFLICT (guia) DO NOTHING`,
-          [row.fecha, row.warehouse, row.guia, row.canaln]
+          [row.fecha,
+          row.warehouse.trim(),
+          row.guia.trim(),
+          row.canaln]
         );
         insertados++;
       } catch (error) {

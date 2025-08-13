@@ -6,6 +6,7 @@ const {
 const {
   crearTablaCodigos,
   verificarPorWarehouse,
+  verificarPorGuia,
   obtenerTodos
 } = require("../models/codigosModel");
 
@@ -49,6 +50,32 @@ const verificarCodigo = async (req, res) => {
   }
 };
 
+const verificarCodigoG = async (req, res) => {
+  const { guia } = req.body;
+  if (!guia) return res.status(400).send("Código requerido");
+
+  try {
+    const codigo = guia.trim();
+    const result = await verificarPorGuia(codigo);
+
+    const estado = result.length > 0 ? "ROJO" : "VERDE";
+
+    // Registrar log en la tabla log_verificaciones_guia
+    await pool.query(
+      `INSERT INTO log_verificaciones_guia (codigo, resultado) VALUES ($1, $2)`,
+      [codigo, estado]
+    );
+
+    if (estado === "ROJO") {
+      return res.status(200).send("⛔ CÓDIGO ROJO");
+    } else {
+      return res.status(204).send(); // permitido
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error al verificar");
+  }
+};
 
 const obtenerCodigos = async (_req, res) => {
   try {
@@ -64,5 +91,6 @@ module.exports = {
   crearTablaCodigos,
   migrarDatos,
   verificarCodigo,
+  verificarCodigoG,
   obtenerCodigos,
 };

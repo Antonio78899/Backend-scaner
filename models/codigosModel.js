@@ -18,6 +18,14 @@ const crearTablaCodigos = async () => {
       fecha TIMESTAMP DEFAULT NOW()
     );
   `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS log_verificaciones_guia (
+      id SERIAL PRIMARY KEY,
+      codigo VARCHAR(100) NOT NULL,
+      resultado VARCHAR(10) NOT NULL, -- 'ROJO' o 'VERDE'
+      fecha TIMESTAMP DEFAULT NOW()
+    );
+  `);
 };
 
 const obtenerTodos = async () => {
@@ -33,8 +41,17 @@ const verificarPorWarehouse = async (warehouse) => {
   return result.rows;
 };
 
+const verificarPorGuia = async (guia) => {
+  const result = await pool.query(
+    `SELECT * FROM codigos_rojos WHERE guia = $1`,
+    [guia.trim()]
+  );
+  return result.rows;
+};
+
 module.exports = {
   crearTablaCodigos,
   obtenerTodos,
   verificarPorWarehouse,
+  verificarPorGuia
 };

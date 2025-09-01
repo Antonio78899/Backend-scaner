@@ -1,13 +1,9 @@
 const { Pool } = require('pg');
-require('dotenv').config({ path: '.env.local' });
 
+const isLocal = /localhost|127\.0\.0\.1/.test(process.env.DATABASE_URL || '');
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false   // 👈 Acepta certificados self-signed
-  },
+  ssl: isLocal ? false : { rejectUnauthorized: false }, // TLS ON en nube
   max: 5,
-  idleTimeoutMillis: 0,
 });
-
 module.exports = pool;

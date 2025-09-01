@@ -2,10 +2,12 @@ const { Pool } = require('pg');
 require('dotenv').config({ path: '.env.local' });
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL, // pon aquí la URL del Transaction pooler
-  ssl: { rejectUnauthorized: false },
-  max: 5,                 // pequeño para free tier
-  idleTimeoutMillis: 0,   // no cierres por inactividad
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false   // 👈 Acepta certificados self-signed
+  },
+  max: 5,
+  idleTimeoutMillis: 0,
 });
 
 module.exports = pool;

@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
-const { auth } = require('../middlewares/authMiddleware.JS');
-const { requireActiveSession } = require('../middlewares/activityMiddleware.JS');
+const { auth } = require('../middlewares/authMiddleware');
+const { requireActiveSession } = require('../middlewares/activityMiddleware');
 
 const codigosRojos = require('../controllers/codigosControllerRojos');
 const codigosAlmacen = require('../controllers/codigosControllerAlmacen');

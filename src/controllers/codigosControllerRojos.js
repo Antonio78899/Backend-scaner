@@ -57,6 +57,11 @@ const verificarCodigo = async (req, res) => {
       [device_name, device_id, codigo, estado, usuario_id]
     );
 
+    // Incremento de rendimiento si ROJO/VERDE
+    if (usuario_id && (estado === 'ROJO' || estado === 'VERDE')) {
+      await pool.query(`UPDATE usuarios SET rendimiento = rendimiento + 1 WHERE id = $1`, [usuario_id]);
+    }
+
     if (estado === 'ROJO') return res.status(200).send('⛔ CÓDIGO ROJO');
     if (estado === 'VERDE') return res.status(204).send();
     return res.status(404).send('❌ CÓDIGO DESCONOCIDO');
@@ -88,6 +93,11 @@ const verificarCodigoG = async (req, res) => {
        VALUES ($1, $2, $3, $4, $5)`,
       [device_name, device_id, codigo, estado, usuario_id]
     );
+
+    // Incremento de rendimiento si ROJO/VERDE
+    if (usuario_id && (estado === 'ROJO' || estado === 'VERDE')) {
+      await pool.query(`UPDATE usuarios SET rendimiento = rendimiento + 1 WHERE id = $1`, [usuario_id]);
+    }
 
     if (estado === 'ROJO') return res.status(200).send('⛔ CÓDIGO ROJO');
     if (estado === 'VERDE') return res.status(204).send();

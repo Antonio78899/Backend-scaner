@@ -83,6 +83,11 @@ const verificarCodigoGuia = async (req, res) => {
       [device_name, device_id, codigo, estado, ubicacionTexto, usuario_id]
     );
 
+    // ⬇️ incremento de rendimiento si ROJO/VERDE
+    if (usuario_id && (estado === 'ROJO' || estado === 'VERDE')) {
+      await pool.query(`UPDATE usuarios SET rendimiento = rendimiento + 1 WHERE id = $1`, [usuario_id]);
+    }
+
     if (estado === 'ROJO') {
       return res.status(200).json({ estado: 'ROJO', ...datosUbicacion, mensaje: '⛔ CÓDIGO ROJO' });
     }

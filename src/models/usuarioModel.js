@@ -10,6 +10,7 @@ async function crearTablaUsuarios() {
       estado BOOLEAN DEFAULT TRUE,
       ultimo_login TIMESTAMP,
       rendimiento INT DEFAULT 0,
+      cargo VARCHAR(100),
       creado TIMESTAMP DEFAULT NOW()
     );
     CREATE INDEX IF NOT EXISTS idx_usuarios_dni ON usuarios(dni);

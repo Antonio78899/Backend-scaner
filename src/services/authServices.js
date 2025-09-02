@@ -4,12 +4,12 @@ const { crearUsuario, buscarUsuarioPorDni, setUltimoLogin, actualizarPasswordPor
 
 const JWT_SECRET = process.env.JWT_SECRET || 'cambia-esto';
 
-async function register({ dni, nombre, password }) {
-  if (!dni || !nombre || !password) throw new Error('Campos incompletos');
+async function register({ dni, nombre, password, cargo }) {
+  if (!dni || !nombre || !password || !cargo) throw new Error('Campos incompletos');
   const existente = await buscarUsuarioPorDni(dni);
   if (existente) throw new Error('Usuario ya existe');
   const hash = await bcrypt.hash(password, 10);
-  return await crearUsuario({ dni, nombre, password: hash });
+  return await crearUsuario({ dni, nombre, password: hash, cargo });
 }
 
 async function login({ dni, password }) {

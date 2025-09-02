@@ -17,12 +17,12 @@ async function crearTablaUsuarios() {
   `);
 }
 
-const crearUsuario = async ({ dni, nombre, password }) => {
+const crearUsuario = async ({ dni, nombre, password, cargo }) => {
   const r = await pool.query(
-    `INSERT INTO usuarios (dni, nombre, password)
-     VALUES ($1,$2,$3)
+    `INSERT INTO usuarios (dni, nombre, password, cargo)
+     VALUES ($1,$2,$3,$4)
      RETURNING id, dni, nombre, estado, creado`,
-    [dni, nombre, password]
+    [dni, nombre, password, cargo]
   );
   return r.rows[0];
 };

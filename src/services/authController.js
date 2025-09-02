@@ -2,8 +2,8 @@ const authService = require('./authService');
 
 const register = async (req, res) => {
   try {
-    const { dni, nombre, password } = req.body;
-    const user = await authService.register({ dni, nombre, password });
+    const { dni, nombre, password, cargo } = req.body;
+    const user = await authService.register({ dni, nombre, password, cargo });
     res.status(201).json(user);
   } catch (e) {
     res.status(400).json({ error: e.message }); 

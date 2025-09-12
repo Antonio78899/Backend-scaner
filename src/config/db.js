@@ -117,3 +117,4 @@ setInterval(async () => {
 module.exports = {
   get pool () { return pool; },   // para usar: const { pool } = require('./db')
 };
+

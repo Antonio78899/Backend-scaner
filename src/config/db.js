@@ -1,30 +1,10 @@
-// src/config/db.js
 const { Pool } = require('pg');
 
-let raw = (process.env.DATABASE_URL || '').trim();
-// Por si accidentalmente pusiste "DATABASE_URL=postgresql://..."
-if (raw.startsWith('DATABASE_URL=')) raw = raw.slice('DATABASE_URL='.length);
-
-if (!raw) {
-  console.error('❌ DATABASE_URL no está definida');
-  process.exit(1);
-}
-
-console.log('🔎 DATABASE_URL:', raw.replace(/:[^:@/]+@/, ':****@'));
-
+const isLocal = /localhost|127\.0\.0\.1/.test(process.env.DATABASE_URL || '');
 const pool = new Pool({
-  connectionString: raw,
-  ssl: { rejectUnauthorized: false },
+  connectionString: process.env.DATABASE_URL,
+  ssl: isLocal ? false : { rejectUnauthorized: false }, // TLS ON en nube
   max: 5,
 });
-
-(async () => {
-  try {
-    await pool.query('SELECT 1');
-    console.log('✅ DB OK (SELECT 1)');
-  } catch (e) {
-    console.error('❌ DB FAIL', e);
-  }
-})();
-
 module.exports = pool;
+

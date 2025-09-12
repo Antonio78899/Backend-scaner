@@ -1,4 +1,4 @@
-const pool = require('../config/db');
+const { pool } = require('../config/db');
 const { crearTablaUsuarios } = require('./usuarioModel');
 const { crearTablaCodigos } = require('./codigosModel');
 

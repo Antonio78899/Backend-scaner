@@ -1,4 +1,4 @@
-const pool = require('../config/db');
+const { pool } = require('../config/db');
 
 // Stats totales del usuario (hoy / semana / mes) usando timezone
 async function getUserScanStats(userId, tz = 'America/Lima') {

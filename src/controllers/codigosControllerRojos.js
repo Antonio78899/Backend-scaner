@@ -10,7 +10,7 @@ const {
   obtenerTodos
 } = require('../models/codigosModel');
 
-const pool = require('../config/db');
+const { pool } = require('../config/db');
 const { getDeviceMeta } = require('../utils/device');
 
 // Mapea canaln -> estado

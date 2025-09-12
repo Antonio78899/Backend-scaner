@@ -1,6 +1,6 @@
 const XLSX = require('xlsx');
 const { verificarPorGuia } = require('../models/codigosModel');
-const pool = require('../config/db');
+const { pool } = require('../config/db');
 const { getDeviceMeta } = require('../utils/device');
 
 /* ----------------------- Helpers ----------------------- */
